@@ -1,6 +1,6 @@
 package it.unibo.es2;
 
-import java.util.Map;
+import java.util.List;
 
 public interface Logics {
     
@@ -8,13 +8,13 @@ public interface Logics {
      * 
      * @return size of the button matrix
      */
-    Pair<Integer, Integer> getSize();
+    int getSize();
 
     /**
      * 
      * @return values to appear in button
      */
-    Map<Pair<Integer, Integer>, String> getValues();
+    List<List<String>> getValues();
 
     /**
      * 

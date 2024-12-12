@@ -1,47 +1,67 @@
 package it.unibo.es2;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public class LogicsImpl implements Logics {
 
-    private final Map<Pair<Integer, Integer>, String> values;
+    private final List<List<String>> values;
 
-    public LogicsImpl(final Pair<Integer, Integer> size) {
-        if (size.getX() < 0 || size.getY() < 0) {
-            throw new IllegalArgumentException("The size of x or y is less than 0");
+    public LogicsImpl(final int size) {
+		if (size < 0) {
+            throw new IllegalArgumentException("The size can't be less than 0");
         }
-        values = new HashMap<>();
-        for (int i = 0; i < size.getX(); i++) {
-            for (int j = 0; j < size.getY(); j++) {
-                values.put(new Pair<Integer,Integer>(i, j), " ");
+        values = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            values.add(new ArrayList<>());
+            for (int j = 0; j < size; j++) {
+                values.get(i).add(" ");
             }
         }
-    }
-    @Override
-    public Pair<Integer, Integer> getSize() {
-        return values.keySet().stream()
-            .max((k1, k2) -> Integer.compare(k1.getX() + k1.getY(), k2.getX() + k2.getY()))
-            .orElse(new Pair<Integer,Integer>(0, 0));
+	}
+
+	@Override
+    public int getSize() {
+        return values.size();
     }
 
     @Override
-    public Map<Pair<Integer, Integer>, String> getValues() {
-        return Collections.unmodifiableMap(values);
+    public List<List<String>> getValues() {
+        return Collections.unmodifiableList(values);
     }
 
     @Override
-    public String hit(Pair<Integer, Integer> elem) {
-        values.put(elem, values.get(elem).equals(" ") ? "*" : " "); 
-        return values.get(elem);
+    public String hit(final Pair<Integer, Integer> pos) {
+        values.get(pos.getY()).set(pos.getX(), values.get(pos.getY()).get(pos.getX()).equals(" ") ? "*" : " ");
+        return values.get(pos.getY()).get(pos.getX());
     }
 
     @Override
     public boolean quit() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'quit'");
+        //rowWithStarExistsWithStreams();
+        return values.stream().anyMatch(l -> l.stream().allMatch(s -> s.equals("*"))) || rowWithStarExists();
     }
     
+    private boolean rowWithStarExists() {
+        boolean exists = true;
+        for (int i = 0; i < values.size(); i++) {
+            exists = true;
+            for (int j = 0; j < values.size(); j++) {
+                if(values.get(j).get(i).equals(" ")) {
+                    exists = false;
+                }
+            }
+            if (exists) {
+                return true;
+            }
+        }
+        return exists;
+    }
+
+    /* private void rowWithStarExistsWithStreams() {
+         System.out.println(values.stream().filter(l -> l.contains("*"))
+            .flatMap(List::stream).toList());
+    } */
 }
