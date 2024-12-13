@@ -1,7 +1,7 @@
 package it.unibo.es2;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -41,10 +41,10 @@ public class LogicsImpl implements Logics {
     @Override
     public boolean quit() {
         //rowWithStarExistsWithStreams();
-        return values.stream().anyMatch(l -> l.stream().allMatch(s -> s.equals("*"))) || rowWithStarExists();
+        return values.stream().anyMatch(l -> l.stream().allMatch(s -> s.equals("*"))) || rowWithStarExistsWithStreams();
     }
     
-    private boolean rowWithStarExists() {
+    /* private boolean rowWithStarExists() {
         boolean exists = true;
         for (int i = 0; i < values.size(); i++) {
             exists = true;
@@ -58,10 +58,11 @@ public class LogicsImpl implements Logics {
             }
         }
         return exists;
-    }
-
-    /* private void rowWithStarExistsWithStreams() {
-         System.out.println(values.stream().filter(l -> l.contains("*"))
-            .flatMap(List::stream).toList());
     } */
+
+    private boolean rowWithStarExistsWithStreams() {
+        return IntStream.range(0, this.values.size())
+            .anyMatch(i -> IntStream.range(0, this.values.size())
+                .allMatch(j -> this.values.get(j).get(i).equals("*")));
+    } 
 }
